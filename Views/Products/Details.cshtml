@@ -1,0 +1,26 @@
+@model Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+<div class="detail-grid">
+    <div class="detail-img"><img src="/@Model.ImageUrl" alt="@Model.Name" /></div>
+    <div class="detail-info">
+        <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to shop</a>
+        <div class="crumb" style="margin-top:1rem;">Catalog / @Model.Name</div>
+        <h1>@Model.Name</h1>
+        <span class="st @(Model.Stock > 0 ? "st-3" : "st-4")">@(Model.Stock > 0 ? $"{Model.Stock} in stock" : "Out of stock")</span>
+        <div class="detail-price">@Model.Price.ToString("C")</div>
+        <p class="detail-desc">@Model.Description</p>
+        <div class="d-flex gap-2 mt-4">
+            @if (User.IsInRole("Client") && Model.Stock > 0)
+            {
+                <form asp-controller="Cart" asp-action="Add" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <button class="btn btn-lime btn-lg"><i class="bi bi-cart-plus"></i> Add to cart</button>
+                </form>
+            }
+            <a asp-action="Index" class="btn btn-ghost btn-lg">Keep browsing</a>
+        </div>
+    </div>
+</div>

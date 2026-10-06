@@ -1,0 +1,45 @@
+@model Product
+@{
+    ViewData["Title"] = "Edit Product";
+}
+<div class="admin-bar">
+    <h3>Edit <span style="color:var(--brand-2);">@Model.Name</span></h3>
+    <a asp-action="Index" class="btn btn-ghost btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="panel" style="max-width:760px;">
+    <div class="panel-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="summary-errors"></div>
+            <div class="field">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name" class="val"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description" rows="3"></textarea>
+                <span asp-validation-for="Description" class="val"></span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+                <div class="field">
+                    <label asp-for="Price"></label>
+                    <input asp-for="Price" type="number" step="0.01" min="0.01" />
+                    <span asp-validation-for="Price" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Stock"></label>
+                    <input asp-for="Stock" type="number" min="0" />
+                    <span asp-validation-for="Stock" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="ImageUrl"></label>
+                    <input asp-for="ImageUrl" />
+                    <span asp-validation-for="ImageUrl" class="val"></span>
+                </div>
+            </div>
+            <button class="btn btn-ink btn-lg"><i class="bi bi-check-lg"></i> Save changes</button>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,42 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-side">
+            <div>
+                <div class="wordmark" style="color:#f2f5ea;">Shop<em style="color:var(--lime);">App</em><span class="dot">.</span></div>
+                <h2>Good to see you again.</h2>
+                <p>Log in to browse the catalog, track your orders and check out with our secure (mock) gateway.</p>
+            </div>
+            <div class="quote">&ldquo;Everything you love, delivered.&rdquo;</div>
+        </div>
+        <div class="auth-form">
+            <h3 class="serif">Welcome back</h3>
+            <div class="demo-box">
+                <i class="bi bi-key"></i> <strong>Demo accounts</strong><br />
+                Client &mdash; <strong>client@shop.com</strong> / Client123!<br />
+                Admin &mdash; <strong>admin@shop.com</strong> / Admin123!
+            </div>
+            <form asp-action="Login" method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div asp-validation-summary="ModelOnly" class="summary-errors"></div>
+                <div class="field">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" placeholder="you@example.com" />
+                    <span asp-validation-for="Email" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" placeholder="Your password" />
+                    <span asp-validation-for="Password" class="val"></span>
+                </div>
+                <button class="btn btn-ink btn-lg w-100">Login <i class="bi bi-arrow-right"></i></button>
+            </form>
+            <p class="auth-alt">No account yet? <a asp-action="Register">Create one &mdash; it takes 20 seconds</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

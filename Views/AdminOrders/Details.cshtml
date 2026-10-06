@@ -1,0 +1,51 @@
+@model Order
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+<div class="admin-bar">
+    <h3>Order <span style="color:var(--brand-2);">#@Model.Id</span></h3>
+    <span class="st st-@((int)Model.Status)">@Model.Status</span>
+</div>
+
+<div class="meta-grid">
+    <div class="meta-card">
+        <h5>Customer</h5>
+        <p><strong>@(Model.User?.FullName)</strong></p>
+        <p style="color:var(--muted);">@Model.User?.Email</p>
+        <p style="color:var(--muted);"><i class="bi bi-calendar3"></i> @Model.CreatedAt.ToString("MMMM dd, yyyy &middot; HH:mm")</p>
+        <p style="color:var(--muted);"><i class="bi bi-credit-card"></i> @(Model.PaymentReference ?? "Unpaid")</p>
+    </div>
+    <div class="meta-card">
+        <h5>Change order status</h5>
+        <form asp-action="UpdateStatus" method="post" class="status-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="orderId" value="@Model.Id" />
+            <div class="field" style="flex:1;margin:0;">
+                <select name="status" asp-items="Html.GetEnumSelectList<OrderStatus>()"></select>
+            </div>
+            <button class="btn btn-lime"><i class="bi bi-arrow-repeat"></i> Update</button>
+        </form>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:.7rem;">Customer sees this status in &ldquo;My Orders&rdquo; instantly.</p>
+    </div>
+</div>
+
+<div class="panel">
+    <table class="tbl">
+        <thead><tr><th>Product</th><th class="num">Unit price</th><th class="text-center">Qty</th><th class="num">Subtotal</th></tr></thead>
+        <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td class="num">@item.UnitPrice.ToString("C")</td>
+                <td class="text-center"><span class="qty-pill">&times;@item.Quantity</span></td>
+                <td class="num">@((item.UnitPrice * item.Quantity).ToString("C"))</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr><td colspan="3">Order total</td><td class="num" style="color:var(--brand-2);font-size:1.05rem;">@Model.Total.ToString("C")</td></tr>
+        </tfoot>
+    </table>
+</div>
+<p class="mt-4"><a asp-action="Index" class="btn btn-ghost btn-sm"><i class="bi bi-arrow-left"></i> All orders</a></p>

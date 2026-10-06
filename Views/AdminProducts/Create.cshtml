@@ -1,0 +1,114 @@
+@model Product
+@{
+    ViewData["Title"] = "New Product";
+}
+<div class="admin-bar">
+    <h3>Create product</h3>
+    <a asp-action="Index" class="btn btn-ghost btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="panel" style="max-width:760px;">
+    <div class="panel-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="summary-errors"></div>
+            <div class="field">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" placeholder="Wireless Headphones" />
+                <span asp-validation-for="Name" class="val"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description" rows="3" placeholder="Short, catchy description..."></textarea>
+                <span asp-validation-for="Description" class="val"></span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+                <div class="field">
+                    <label asp-for="Price"></label>
+                    <input asp-for="Price" type="number" step="0.01" min="0.01" placeholder="79.99" />
+                    <span asp-validation-for="Price" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Stock"></label>
+                    <input asp-for="Stock" type="number" min="0" placeholder="25" />
+                    <span asp-validation-for="Stock" class="val"></span>
+                </div>
+            </div>
+            <div class="field">
+                <label>Product image</label>
+                <div id="dropZone" class="drop-zone">
+                    <input type="file" id="imageFile" name="imageFile" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden />
+                    <div id="dropEmpty" class="drop-empty">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <p><strong>Drag &amp; drop</strong> the product image here,<br />or <span class="drop-link">click to browse</span></p>
+                        <small>JPG, PNG, WEBP, GIF or AVIF &middot; max 5 MB</small>
+                    </div>
+                    <div id="dropFilled" class="drop-filled" hidden>
+                        <img id="previewImg" alt="Image preview" />
+                        <div class="drop-meta">
+                            <span id="previewName" class="drop-name"></span>
+                            <button type="button" id="removeImage" class="btn btn-danger btn-sm"><i class="bi bi-trash3"></i> Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <span class="val">@Html.ValidationMessage("imageFile")</span>
+            </div>
+            <button class="btn btn-lime btn-lg"><i class="bi bi-plus-lg"></i> Create product</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const zone = document.getElementById('dropZone');
+            const input = document.getElementById('imageFile');
+            const empty = document.getElementById('dropEmpty');
+            const filled = document.getElementById('dropFilled');
+            const img = document.getElementById('previewImg');
+            const nameEl = document.getElementById('previewName');
+            const removeBtn = document.getElementById('removeImage');
+            const err = zone.parentElement.querySelector('.val');
+            const maxSize = 5 * 1024 * 1024;
+            const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+
+            function showError(msg) {
+                err.textContent = msg;
+                zone.classList.add('drop-error');
+            }
+            function clearError() {
+                err.textContent = '';
+                zone.classList.remove('drop-error');
+            }
+            function reset() {
+                input.value = '';
+                img.removeAttribute('src');
+                filled.hidden = true;
+                empty.hidden = false;
+            }
+            function setFile(file) {
+                clearError();
+                if (!file) { reset(); return; }
+                if (!allowed.includes(file.type)) { showError('Only JPG, PNG, WEBP, GIF or AVIF images are allowed.'); return; }
+                if (file.size > maxSize) { showError('Image must be 5 MB or smaller.'); return; }
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files; // put the dropped file into the real input so it posts with the form
+                img.src = URL.createObjectURL(file);
+                nameEl.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+                empty.hidden = true;
+                filled.hidden = false;
+            }
+
+            zone.addEventListener('click', function (e) { if (e.target !== removeBtn) input.click(); });
+            input.addEventListener('change', function () { setFile(input.files[0]); });
+            removeBtn.addEventListener('click', function (e) { e.stopPropagation(); clearError(); reset(); });
+
+            ['dragenter', 'dragover'].forEach(function (ev) {
+                zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.add('dragover'); });
+            });
+            ['dragleave', 'drop'].forEach(function (ev) {
+                zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.remove('dragover'); });
+            });
+            zone.addEventListener('drop', function (e) { setFile(e.dataTransfer.files[0]); });
+        })();
+    </script>
+}

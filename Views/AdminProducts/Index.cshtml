@@ -1,0 +1,41 @@
+@model List<Product>
+@{
+    ViewData["Title"] = "Manage Products";
+    int lowStock = Model.Count(p => p.Stock > 0 && p.Stock <= 5);
+}
+<div class="admin-bar">
+    <h3>Products</h3>
+    <a asp-action="Create" class="btn btn-lime"><i class="bi bi-plus-lg"></i> New product</a>
+</div>
+
+<div class="kpi-row">
+    <div class="kpi"><i class="bi bi-box-seam k-ico"></i><div class="k-label">Products</div><div class="k-val">@Model.Count</div></div>
+    <div class="kpi"><i class="bi bi-check-circle k-ico"></i><div class="k-label">In stock</div><div class="k-val">@Model.Count(p => p.Stock > 0)</div></div>
+    <div class="kpi"><i class="bi bi-exclamation-triangle k-ico"></i><div class="k-label">Low stock</div><div class="k-val">@lowStock</div></div>
+    <div class="kpi"><i class="bi bi-x-circle k-ico"></i><div class="k-label">Out of stock</div><div class="k-val">@Model.Count(p => p.Stock == 0)</div></div>
+</div>
+
+<div class="panel">
+    <table class="tbl">
+        <thead><tr><th>#</th><th>Product</th><th class="num">Price</th><th class="text-center">Stock</th><th class="text-end">Actions</th></tr></thead>
+        <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td style="color:var(--muted);">@p.Id</td>
+                <td><strong>@p.Name</strong></td>
+                <td class="num">@p.Price.ToString("C")</td>
+                <td class="text-center">
+                    @if (p.Stock == 0) { <span class="st st-4">Out</span> }
+                    else if (p.Stock <= 5) { <span class="st st-0">@p.Stock left</span> }
+                    else { <span class="st st-3">@p.Stock</span> }
+                </td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-ghost btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                    <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-danger btn-sm"><i class="bi bi-trash3"></i></a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

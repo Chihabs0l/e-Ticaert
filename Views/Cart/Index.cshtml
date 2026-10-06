@@ -1,0 +1,58 @@
+@model List<CartItem>
+@{
+    ViewData["Title"] = "Your Cart";
+    decimal total = ViewBag.Total;
+}
+<div class="admin-bar">
+    <h3>Your Cart</h3>
+    <a asp-controller="Products" asp-action="Index" class="btn btn-ghost btn-sm"><i class="bi bi-arrow-left"></i> Continue shopping</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="panel"><div class="empty">
+        <i class="bi bi-cart3"></i>
+        <p>Your cart is feeling light.<br /><a asp-controller="Products" asp-action="Index">Discover products</a></p>
+    </div></div>
+}
+else
+{
+    <div class="cart-layout">
+        <div class="panel">
+            @foreach (var item in Model)
+            {
+                <div class="cart-item">
+                    <div class="cart-thumb">@item.Name.Substring(0, 1)</div>
+                    <div>
+                        <div class="cart-name">@item.Name</div>
+                        <div class="cart-unit">@item.Price.ToString("C") each</div>
+                    </div>
+                    <span class="qty-pill">&times;@item.Quantity</span>
+                    <div class="d-flex align-items-center gap-3">
+                        <strong class="num">@item.Subtotal.ToString("C")</strong>
+                        <form asp-action="Remove" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button class="cart-remove" title="Remove"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="panel">
+            <div class="panel-head"><h3 class="serif">Summary</h3></div>
+            <div class="panel-body">
+                <div class="summary-row"><span>Items</span><span>@Model.Sum(c => c.Quantity)</span></div>
+                <div class="summary-row"><span>Shipping</span><span class="st st-3">Free</span></div>
+                <div class="summary-total"><span>Total</span><span>@total.ToString("C")</span></div>
+                <form asp-action="Checkout" method="post" class="mt-4 d-grid">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-lime btn-lg"><i class="bi bi-lock"></i> Checkout &middot; @total.ToString("C")</button>
+                </form>
+                <p class="text-center mt-3 mb-0" style="font-size:.78rem;color:var(--muted);">
+                    <i class="bi bi-shield-check"></i> Secured by MockPay (test mode)
+                </p>
+            </div>
+        </div>
+    </div>
+}

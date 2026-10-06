@@ -1,0 +1,67 @@
+@model List<Product>
+@{
+    ViewData["Title"] = "Shop";
+    bool isClient = User.IsInRole("Client");
+}
+
+<form class="searchbar" method="get">
+    <input type="text" name="search" value="@ViewBag.Search" placeholder="Search headphones, keyboards, watches..." />
+    <button class="btn btn-ink"><i class="bi bi-search"></i> Search</button>
+</form>
+
+<section class="hero">
+    <div class="container hero-inner">
+        <span class="hero-kicker">New season &middot; New drops</span>
+        <h1 class="hero-title">Everything you love,<br /><em>delivered.</em></h1>
+        <p class="hero-sub">Hand-picked tech and everyday essentials. Add to cart, check out with our secure (mock) gateway, and track your order in real time.</p>
+        <a href="#catalog" class="btn btn-lime btn-lg"><i class="bi bi-arrow-down"></i> Shop the catalog</a>
+    </div>
+</section>
+
+<br />
+
+<div id="catalog">
+    @if (!Model.Any())
+    {
+        <div class="panel"><div class="empty">
+            <i class="bi bi-search"></i>
+            <p>No products found@(ViewBag.Search != null ? $" for “{ViewBag.Search}”" : ""). <a asp-action="Index">Clear search</a></p>
+        </div></div>
+    }
+    else
+    {
+        <div class="p-grid">
+        @foreach (var p in Model)
+        {
+            <div class="p-card">
+                <a class="p-img" asp-action="Details" asp-route-id="@p.Id">
+                    <img src="@p.ImageUrl" alt="@p.Name" />
+                    @if (p.Stock > 0)
+                    {
+                        <span class="p-tag">@p.Stock in stock</span>
+                    }
+                    else
+                    {
+                        <span class="p-tag out">Sold out</span>
+                    }
+                </a>
+                <div class="p-body">
+                    <h3 class="p-name"><a asp-action="Details" asp-route-id="@p.Id">@p.Name</a></h3>
+                    <p class="p-desc">@p.Description</p>
+                    <div class="p-foot">
+                        <span class="p-price">@p.Price.ToString("C")</span>
+                        @if (isClient && p.Stock > 0)
+                        {
+                            <form asp-controller="Cart" asp-action="Add" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@p.Id" />
+                                <button class="p-add" title="Add to cart"><i class="bi bi-plus-lg"></i></button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    }
+</div>

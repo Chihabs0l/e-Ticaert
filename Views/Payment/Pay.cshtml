@@ -1,0 +1,55 @@
+@model PaymentViewModel
+@{
+    ViewData["Title"] = "Secure Checkout";
+}
+
+<div class="pay-wrap">
+    <div class="pay-card">
+        <div class="pay-head">
+            <div class="pay-brand"><i class="bi bi-shield-lock"></i> MockPay&trade;</div>
+            <div class="pay-amount">@Model.Amount.ToString("C")</div>
+        </div>
+        <div class="pay-body">
+            <div class="pay-note">
+                <i class="bi bi-info-circle"></i> <strong>Test mode</strong> — no real payment is processed.
+                Use card <strong>4242 4242 4242 4242</strong>, any future expiry (MM/YY), any CVV.
+            </div>
+
+            <form asp-action="Pay" method="post">
+                <div asp-validation-summary="ModelOnly" class="summary-errors"></div>
+                <input type="hidden" asp-for="OrderId" />
+                <input type="hidden" asp-for="Amount" />
+
+                <div class="field">
+                    <label asp-for="CardHolder"></label>
+                    <input asp-for="CardHolder" placeholder="JOHN DOE" autocomplete="off" />
+                    <span asp-validation-for="CardHolder" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="CardNumber"></label>
+                    <input asp-for="CardNumber" placeholder="4242 4242 4242 4242" maxlength="19" autocomplete="off" />
+                    <span asp-validation-for="CardNumber" class="val"></span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="field">
+                        <label asp-for="Expiry"></label>
+                        <input asp-for="Expiry" placeholder="12/28" maxlength="5" autocomplete="off" />
+                        <span asp-validation-for="Expiry" class="val"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Cvv"></label>
+                        <input asp-for="Cvv" placeholder="123" maxlength="4" autocomplete="off" />
+                        <span asp-validation-for="Cvv" class="val"></span>
+                    </div>
+                </div>
+                <button class="btn btn-lime btn-lg w-100 mt-2"><i class="bi bi-lock-fill"></i> Pay @Model.Amount.ToString("C")</button>
+                <a asp-controller="Orders" asp-action="Index" class="d-block text-center mt-3" style="color:#8d9a8e;font-size:.84rem;">Pay later &mdash; order stays pending</a>
+            </form>
+        </div>
+    </div>
+    <p class="text-center mt-3" style="color:var(--muted);font-size:.78rem;">
+        <i class="bi bi-shield-check"></i> 256-bit SSL encrypted &middot; PCI-DSS compliant-ish &middot; demo only
+    </p>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

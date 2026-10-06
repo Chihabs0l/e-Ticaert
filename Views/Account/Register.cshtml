@@ -1,0 +1,46 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Sign up";
+}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-side">
+            <div>
+                <div class="wordmark" style="color:#f2f5ea;">Shop<em style="color:var(--lime);">App</em><span class="dot">.</span></div>
+                <h2>Join the club.</h2>
+                <p>Create a free client account to start shopping, save your cart and follow your orders from checkout to doorstep.</p>
+            </div>
+            <div class="quote">&ldquo;New drops every Friday.&rdquo;</div>
+        </div>
+        <div class="auth-form">
+            <h3 class="serif">Create your account</h3>
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="summary-errors"></div>
+                <div class="field">
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" placeholder="Jane Doe" />
+                    <span asp-validation-for="FullName" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" placeholder="you@example.com" />
+                    <span asp-validation-for="Email" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" placeholder="Min. 6 characters" />
+                    <span asp-validation-for="Password" class="val"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" placeholder="Repeat password" />
+                    <span asp-validation-for="ConfirmPassword" class="val"></span>
+                </div>
+                <button class="btn btn-lime btn-lg w-100">Create account <i class="bi bi-arrow-right"></i></button>
+            </form>
+            <p class="auth-alt">Already a member? <a asp-action="Login">Log in</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

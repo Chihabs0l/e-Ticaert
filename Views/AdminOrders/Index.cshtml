@@ -1,0 +1,44 @@
+@model List<Order>
+@{
+    ViewData["Title"] = "Manage Orders";
+    decimal revenue = Model.Where(o => o.Status != OrderStatus.Cancelled && o.Status != OrderStatus.PendingPayment).Sum(o => o.Total);
+}
+<div class="admin-bar">
+    <h3>Orders</h3>
+</div>
+
+<div class="kpi-row">
+    <div class="kpi"><i class="bi bi-receipt k-ico"></i><div class="k-label">Total orders</div><div class="k-val">@Model.Count</div></div>
+    <div class="kpi"><i class="bi bi-hourglass-split k-ico"></i><div class="k-label">Pending payment</div><div class="k-val">@Model.Count(o => o.Status == OrderStatus.PendingPayment)</div></div>
+    <div class="kpi"><i class="bi bi-truck k-ico"></i><div class="k-label">To ship</div><div class="k-val">@Model.Count(o => o.Status == OrderStatus.Processing)</div></div>
+    <div class="kpi"><i class="bi bi-cash-stack k-ico"></i><div class="k-label">Paid revenue</div><div class="k-val">@revenue.ToString("C0")</div></div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="panel"><div class="empty">
+        <i class="bi bi-receipt-cutoff"></i>
+        <p>No orders yet.</p>
+    </div></div>
+}
+else
+{
+    <div class="panel">
+        <table class="tbl">
+            <thead><tr><th>#</th><th>Customer</th><th>Date</th><th class="num">Total</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td><strong>#@o.Id</strong></td>
+                    <td>@(o.User?.FullName ?? "—")</td>
+                    <td>@o.CreatedAt.ToString("MMM dd, yyyy &middot; HH:mm")</td>
+                    <td class="num">@o.Total.ToString("C")</td>
+                    <td><span class="st st-@((int)o.Status)">@o.Status</span></td>
+                    <td class="num"><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-ghost btn-sm">Manage</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,36 @@
+@model List<Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+<div class="admin-bar">
+    <h3>My Orders</h3>
+    <a asp-controller="Products" asp-action="Index" class="btn btn-lime btn-sm"><i class="bi bi-plus-lg"></i> New order</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="panel"><div class="empty">
+        <i class="bi bi-receipt"></i>
+        <p>No orders yet.<br /><a asp-controller="Products" asp-action="Index">Start shopping</a></p>
+    </div></div>
+}
+else
+{
+    <div class="panel">
+        <table class="tbl">
+            <thead><tr><th>Order</th><th>Date</th><th class="num">Total</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td><strong>#@o.Id</strong></td>
+                    <td>@o.CreatedAt.ToString("MMM dd, yyyy &middot; HH:mm")</td>
+                    <td class="num">@o.Total.ToString("C")</td>
+                    <td><span class="st st-@((int)o.Status)">@o.Status</span></td>
+                    <td class="num"><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-ghost btn-sm">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
